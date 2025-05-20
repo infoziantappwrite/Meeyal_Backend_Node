@@ -27,10 +27,12 @@ exports.registerUser = async (req, res) => {
   }
 };
 
+
 exports.loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await UserProfile.findOne({ username });
+
     if (!user || !user.validatePassword(password)) {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
@@ -45,20 +47,57 @@ exports.loginUser = async (req, res) => {
       expiresIn: process.env.JWT_EXPIRES_IN || '1h',
     });
 
+    // Set token in cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // set to true in production (requires HTTPS)
+      sameSite: "strict", // CSRF protection
+      maxAge: 3600000*24*7, // 1 hour in ms
+    });
+
     res.status(200).json({
       message: 'Login successful',
-      token,
-      user: { name: user.name, username, email: user.email, mobile: user.mobile },
+      user: {
+        name: user.name,
+        username,
+        email: user.email,
+        mobile: user.mobile,
+      },
     });
   } catch (err) {
     res.status(500).json({ error: 'Server error', details: err.message });
   }
 };
+exports.logoutUser = (req, res) => {
+  res.cookie("token", "", {
+    httpOnly: true,
+    expires: new Date(0),
+    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+  });
+
+  res.json({ message: "Logged out successfully" });
+};
+exports.getUserProfile = async (req, res) => {
+  try {
+    const userProfile = await UserProfile.findById(req.user.id).select("-password"); // exclude password if exists
+
+    if (!userProfile) {
+      return res.status(404).json({ message: "User profile not found" });
+    }
+
+    res.json(userProfile);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching profile", error: error.message });
+  }
+};
+
+
 
 exports.changePassword = async (req, res) => {
   try {
-    const { username, oldPassword, newPassword, confirmPassword } = req.body;
-
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+    const username = req.user.username;
     // Check new password and confirm password match
     if (newPassword !== confirmPassword) {
       return res.status(400).json({ message: 'New password and confirm password do not match' });

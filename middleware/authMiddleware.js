@@ -1,16 +1,10 @@
 const jwt = require('jsonwebtoken');
 
 const authenticateToken = (req, res, next) => {
-  //console.log('Headers:', req.headers);  // Debug print all headers
-
-  const authHeader = req.headers['authorization'];
-  //console.log('Authorization Header:', authHeader);
-
-  const token = authHeader && authHeader.split(' ')[1];
-  //console.log('Extracted Token:', token);
+  const token = req.cookies.token; // Get token from cookie
 
   if (!token) {
-    return res.status(401).json({ message: 'Access denied. No token provided.' });
+    return res.status(401).json({ message: 'Access denied. No token provided in cookies.' });
   }
 
   try {

@@ -4,8 +4,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes');
 const cors = require('cors');
-
 const app = express();
+const cookieParser = require("cookie-parser");
+
+app.use(cookieParser());
+
 app.use(cors({
   origin: 'http://localhost:5173', // your frontend URL
   credentials: true
