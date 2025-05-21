@@ -12,7 +12,7 @@ const cartRoutes = require('./routes/cartRoutes');
 app.use(cookieParser());
 
 app.use(cors({
-  origin: ['http://localhost:5173','https://meeyal-frontend-react.vercel.app/'], // your frontend URL
+  origin: ['http://localhost:5173','https://meeyal-frontend-react.vercel.app'], // your frontend URL
   credentials: true
 }));
 
