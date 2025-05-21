@@ -1,10 +1,19 @@
 const Wishlist = require('../models/wishlist');
+const Product = require('../models/Product'); // Needed for populate to work
+const mongoose = require('mongoose');
 
-// Add to wishlist (POST)
+// ✅ Add to wishlist
 exports.addToWishlist = async (req, res) => {
   try {
-    const { userId, productId } = req.body;
+    const userId = req.user.id; // Must be extracted from auth middleware
+    const { productId } = req.body;
 
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ message: 'Invalid product ID' });
+    }
+
+    // Check for existing item
     const existing = await Wishlist.findOne({ userId, productId });
     if (existing) {
       return res.status(409).json({ message: 'Product already in wishlist' });
@@ -13,28 +22,35 @@ exports.addToWishlist = async (req, res) => {
     const wishlistItem = new Wishlist({ userId, productId });
     await wishlistItem.save();
 
-    res.status(201).json(wishlistItem);
+    res.status(201).json({ message: 'Added to wishlist', wishlistItem });
   } catch (error) {
-    res.status(500).json({ message: 'Error adding to wishlist', error });
+    console.error('Error adding to wishlist:', error);
+    res.status(500).json({ message: 'Error adding to wishlist', error: error.message });
   }
 };
 
-// Get wishlist by user (GET)
+// ✅ Get wishlist for logged-in user
 exports.getWishlist = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const userId = req.user.id;
 
-    const wishlist = await Wishlist.find({ userId }).populate('productId'); // optional populate
+    const wishlist = await Wishlist.find({ userId }).populate('productId');
     res.status(200).json(wishlist);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching wishlist', error });
+    console.error('Error fetching wishlist:', error);
+    res.status(500).json({ message: 'Error fetching wishlist', error: error.message });
   }
 };
 
-// Remove from wishlist (DELETE)
+// ✅ Remove from wishlist
 exports.removeFromWishlist = async (req, res) => {
   try {
-    const { userId, productId } = req.body;
+    const userId = req.user.id;
+    const { productId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ message: 'Invalid product ID' });
+    }
 
     const result = await Wishlist.findOneAndDelete({ userId, productId });
     if (!result) {
@@ -43,6 +59,7 @@ exports.removeFromWishlist = async (req, res) => {
 
     res.status(200).json({ message: 'Item removed from wishlist' });
   } catch (error) {
-    res.status(500).json({ message: 'Error removing item', error });
+    console.error('Error removing from wishlist:', error);
+    res.status(500).json({ message: 'Error removing item', error: error.message });
   }
 };
