@@ -6,6 +6,7 @@ const routes = require('./routes');
 const cors = require('cors');
 const app = express();
 const cookieParser = require("cookie-parser");
+const wishlistRoutes = require('./routes/wishlistRoutes');
 
 app.use(cookieParser());
 
@@ -33,6 +34,8 @@ mongoose.connect(MONGO_URI, {
 
 // Routes
 app.use('/api/v1', routes);
+app.use('/api/wishlist', wishlistRoutes);
+
 
 // Start server
 app.listen(PORT, () => {
