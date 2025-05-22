@@ -8,6 +8,7 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+const subcategories = require('./routes/subCategoryRoutes');
 
 app.use(cookieParser());
 
@@ -37,6 +38,8 @@ mongoose.connect(MONGO_URI, {
 app.use('/api/v1', routes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/subcategory', subcategories); // ✅ correct
+
 
 
 // Start server

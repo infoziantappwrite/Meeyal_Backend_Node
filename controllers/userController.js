@@ -52,7 +52,7 @@ exports.loginUser = async (req, res) => {
       httpOnly: true,
       secure: true,         // Railway is HTTPS; must be true when sameSite is None
       sameSite: "None",     // Allows cross-origin cookie usage
-      maxAge: 3600000 * 24 * 7, // 7 days
+      maxAge: 3600000 * 24 , // 7 days
     });
 
 

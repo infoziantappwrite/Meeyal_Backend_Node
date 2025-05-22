@@ -1,5 +1,8 @@
 const Cart = require('../models/cart');
 const Product = require('../models/Product');
+const Category = require('../models/Category');
+const SubCategory = require('../models/SubCategory');
+const ProductImage = require('../models/ProductImage');
 const mongoose = require('mongoose');
 
 // ✅ Add to cart
@@ -65,7 +68,14 @@ exports.reduceFromCart = async (req, res) => {
 exports.getCart = async (req, res) => {
   try {
     const userId = req.user.id;
-    const cartItems = await Cart.find({ userId }).populate('productId');
+    const cartItems = await Cart.find({ userId }).populate({
+        path: 'productId',
+        populate: [
+          { path: 'category' },
+          { path: 'subCategory' },
+          { path: 'productImages' }
+        ]
+      });
     res.status(200).json(cartItems);
   } catch (error) {
     console.error('Error fetching cart:', error);
@@ -88,5 +98,19 @@ exports.removeFromCart = async (req, res) => {
   } catch (error) {
     console.error('Error removing from cart:', error);
     res.status(500).json({ message: 'Error removing item', error: error.message });
+  }
+};
+
+
+exports.clearCart = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    await Cart.deleteMany({ userId });
+
+    res.status(200).json({ message: 'All cart items removed' });
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+    res.status(500).json({ message: 'Error clearing cart', error: error.message });
   }
 };

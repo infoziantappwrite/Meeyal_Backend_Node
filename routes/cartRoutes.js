@@ -8,5 +8,7 @@ router.post('/add', authenticateToken, cartController.addToCart);
 router.get('/', authenticateToken, cartController.getCart);
 router.put('/reduce', authenticateToken, cartController.reduceFromCart);
 router.delete('/remove', authenticateToken, cartController.removeFromCart);
+router.delete('/clear', authenticateToken, cartController.clearCart);
+
 
 module.exports = router;
