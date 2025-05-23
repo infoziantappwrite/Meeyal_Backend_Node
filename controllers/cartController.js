@@ -114,3 +114,31 @@ exports.clearCart = async (req, res) => {
     res.status(500).json({ message: 'Error clearing cart', error: error.message });
   }
 };
+exports.getSingleCartItem = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { productId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ message: 'Invalid product ID' });
+    }
+
+    const item = await Cart.findOne({ userId, productId }).populate({
+      path: 'productId',
+      populate: [
+        { path: 'category' },
+        { path: 'subCategory' },
+        { path: 'productImages' }
+      ]
+    });
+
+    if (!item) {
+      return res.status(404).json({ message: 'Item not found in cart' });
+    }
+
+    res.status(200).json(item);
+  } catch (error) {
+    console.error("Error fetching single cart item:", error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

@@ -9,6 +9,7 @@ router.get('/', authenticateToken, cartController.getCart);
 router.put('/reduce', authenticateToken, cartController.reduceFromCart);
 router.delete('/remove', authenticateToken, cartController.removeFromCart);
 router.delete('/clear', authenticateToken, cartController.clearCart);
+router.get('/:productId', authenticateToken, cartController.getSingleCartItem);
 
 
 module.exports = router;
