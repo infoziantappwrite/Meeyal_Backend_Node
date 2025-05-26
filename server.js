@@ -9,6 +9,8 @@ const cookieParser = require("cookie-parser");
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const subcategories = require('./routes/subCategoryRoutes');
+const orderRoutes = require('./routes/Order');
+const addressRoutes = require('./routes/addressRoutes'); // Assuming you have this route
 
 app.use(cookieParser());
 
@@ -39,6 +41,8 @@ app.use('/api/v1', routes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/subcategory', subcategories); // ✅ correct
+app.use('/api/orders', orderRoutes);
+app.use('/api/addresses', addressRoutes)
 
 
 
