@@ -1,10 +1,8 @@
 const Order = require('../models/orderSchema');
 
 exports.createOrder = async (req, res) => {
-
     try {
         const userId = req.user.id;
-
         const { items, subtotal, tax, shipping, total, paymentMethod } = req.body;
 
         if (!items || !Array.isArray(items) || items.length === 0) {
@@ -22,8 +20,14 @@ exports.createOrder = async (req, res) => {
         const mappedItems = items.map(item => ({
             productId: item.productId,
             quantity: item.quantity,
-            priceAtCheckout: item.price, // <-- fix here
+            priceAtCheckout: item.price,
         }));
+
+        const generateUniqueOrderId = () => {
+            const timestamp = Date.now().toString();
+            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            return `ORDER-${timestamp}-${random}`;
+        };
 
         const newOrder = new Order({
             userId,
@@ -34,7 +38,8 @@ exports.createOrder = async (req, res) => {
             total,
             paymentMethod,
             paymentStatus: 'pending',
-            orderStatus: 'processing'
+            orderStatus: 'processing',
+            orderId: generateUniqueOrderId(), // <-- here
         });
 
         const savedOrder = await newOrder.save();
