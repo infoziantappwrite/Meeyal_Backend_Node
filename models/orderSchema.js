@@ -17,6 +17,7 @@ const orderSchema = new mongoose.Schema({
   paymentStatus: { type: String, enum: ['pending', 'paid', 'failed'], default: 'pending' },
   orderStatus: { type: String, enum: ['processing', 'shipped', 'delivered'], default: 'processing' },
   createdAt: { type: Date, default: Date.now },
+  orderId : { type: String, unique: true, required: true }, // Unique order identifier
 });
 
 module.exports = mongoose.model('Order', orderSchema);
