@@ -34,7 +34,15 @@ exports.getWishlist = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const wishlist = await Wishlist.find({ userId }).populate('productId');
+    const wishlist = await Wishlist.find({ userId })
+  .populate({
+    path: 'productId',
+    populate: {
+      path: 'productImages',
+      model: 'ProductImage'
+    }
+  });
+    
     res.status(200).json(wishlist);
   } catch (error) {
     console.error('Error fetching wishlist:', error);
@@ -46,13 +54,13 @@ exports.getWishlist = async (req, res) => {
 exports.removeFromWishlist = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { productId } = req.body;
+    const { wishlistId } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(productId)) {
-      return res.status(400).json({ message: 'Invalid product ID' });
+    if (!mongoose.Types.ObjectId.isValid(wishlistId)) {
+      return res.status(400).json({ message: 'Invalid wishlist ID' });
     }
 
-    const result = await Wishlist.findOneAndDelete({ userId, productId });
+    const result = await Wishlist.findOneAndDelete({ userId, _id: wishlistId });
     if (!result) {
       return res.status(404).json({ message: 'Wishlist item not found' });
     }
