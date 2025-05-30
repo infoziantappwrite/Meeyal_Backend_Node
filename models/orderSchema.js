@@ -18,6 +18,8 @@ const orderSchema = new mongoose.Schema({
   orderStatus: { type: String, enum: ['processing', 'shipped', 'delivered'], default: 'processing' },
   createdAt: { type: Date, default: Date.now },
   orderId : { type: String, unique: true, required: true }, // Unique order identifier
+  discountPercentage: {type: Number, required: true, default: 0,},
+discountAmount: {type: Number, required: true, default: 0,},
 });
 
 module.exports = mongoose.model('Order', orderSchema);
