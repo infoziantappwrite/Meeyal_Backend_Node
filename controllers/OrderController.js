@@ -55,3 +55,42 @@ exports.createOrder = async (req, res) => {
         res.status(500).json({ message: 'Server error creating order' });
     }
 };
+
+// Update order status if paymentStatus is 'pending'
+exports.updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { orderStatus } = req.body; // e.g., 'shipped' or 'delivered'
+
+    const order = await Order.findOne({ orderId });
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    if (order.paymentStatus !== 'pending') {
+      return res.status(400).json({ message: `Cannot update orderStatus because paymentStatus is '${order.paymentStatus}'` });
+    }
+
+    order.orderStatus = orderStatus;
+    await order.save();
+
+    res.json({ message: 'Order status updated successfully', order });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+// Get all orders with paymentStatus 'pending' and return their orderStatus
+exports.getPendingOrders = async (req, res) => {
+  try {
+    const pendingOrders = await Order.find({ paymentStatus: 'pending' }).select('orderId orderStatus paymentStatus');
+
+    res.json({ orders: pendingOrders });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
