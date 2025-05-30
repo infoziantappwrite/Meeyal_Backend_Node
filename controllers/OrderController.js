@@ -3,13 +3,13 @@ const Order = require('../models/orderSchema');
 exports.createOrder = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { items, subtotal, tax, shipping, total, paymentMethod, discountPercentage, discountAmount} = req.body;
+        const { items, subtotal, tax, shipping, finalTotal, paymentMethod, discountPercentage, discountAmount} = req.body;
 
         if (!items || !Array.isArray(items) || items.length === 0) {
             return res.status(400).json({ message: 'Order must include at least one item.' });
         }
 
-        if (subtotal == null || tax == null || shipping == null || total == null) {
+        if (subtotal == null || tax == null || shipping == null || finalTotal == null) {
             return res.status(400).json({ message: 'Subtotal, tax, shipping, and total are required.' });
         }
 
@@ -35,7 +35,7 @@ exports.createOrder = async (req, res) => {
             subtotal,
             tax,
             shipping,
-            total,
+            total: finalTotal,
             paymentMethod,
             paymentStatus: 'pending',
             orderStatus: 'processing',
