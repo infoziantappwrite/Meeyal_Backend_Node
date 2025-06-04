@@ -20,6 +20,8 @@ const orderSchema = new mongoose.Schema({
   orderId : { type: String, unique: true, required: true }, // Unique order identifier
   discountPercentage: {type: Number, required: true, default: 0,},
 discountAmount: {type: Number, required: true, default: 0,},
+addressId: { type: mongoose.Schema.Types.ObjectId, ref: 'Address', required: true },
+
 });
 
 module.exports = mongoose.model('Order', orderSchema);
