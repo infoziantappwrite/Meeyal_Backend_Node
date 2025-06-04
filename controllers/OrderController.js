@@ -3,7 +3,7 @@ const Order = require('../models/orderSchema');
 exports.createOrder = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { items, subtotal, tax, shipping, finalTotal, paymentMethod, discountPercentage, discountAmount} = req.body;
+        const { items, subtotal, tax, shipping, finalTotal, paymentMethod, discountPercentage, discountAmount, addressId} = req.body;
 
         if (!items || !Array.isArray(items) || items.length === 0) {
             return res.status(400).json({ message: 'Order must include at least one item.' });
@@ -41,6 +41,7 @@ exports.createOrder = async (req, res) => {
             orderStatus: 'processing',
             discountPercentage,
             discountAmount,
+            addressId,
             orderId: generateUniqueOrderId(), // <-- here
         });
 
