@@ -8,7 +8,13 @@ const userSchema = new mongoose.Schema({
   hash: String,
   salt: String,
   mobile: { type: String, required: true },
-  email: { type: String, required: true, unique: true }
+  email: { type: String, required: true, unique: true },
+  verifyToken: String,
+  verifyTokenExpires: Date,
+  resetToken: String,
+  resetTokenExpires: Date,
+  isVerified: { type: Boolean, default: false },
+
 });
 
 // Password methods
