@@ -11,6 +11,7 @@ const productSchema = new mongoose.Schema({
   subCategory: { type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory' },
   status: { type: String, required: true },
   sold: { type: Number, default: 0 },
+  material: {type: String, required: true},
   productImages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ProductImage' }]
 });
 
